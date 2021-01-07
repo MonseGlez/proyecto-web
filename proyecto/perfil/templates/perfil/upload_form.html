@@ -1,3 +1,4 @@
+{% if user.is_authenticated %}
 <div style="padding:40px;margin:40px;border:1px solid #ccc">
     <h1>Firma de archivos.</h1>
     <form method="post" enctype="multipart/form-data">
@@ -7,3 +8,7 @@
     </form><hr>
 
 </div>
+    {% else %}
+        <a href="{% url 'sign_up' %}">Registrate</a>
+        <a href="{% url 'sign_in' %}">Iniciar sesión</a>
+    {% endif %}

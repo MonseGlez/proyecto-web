@@ -27,6 +27,8 @@ from django.contrib.auth.views import LoginView, LogoutView
 from django.views.generic.edit import CreateView
 from django.urls import reverse_lazy
 from .models import Upload
+from django.contrib.auth.decorators import login_required
+
 
 class SignUpView(CreateView):
     model = Perfil
@@ -70,6 +72,7 @@ class SignInView(LoginView):
 
 class SignOutView(LogoutView):
    pass
+@login_required
 class FirmaView(TemplateView):
     template_name = 'perfil/upload_form.html'
 
