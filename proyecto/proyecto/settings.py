@@ -25,7 +25,7 @@ SECRET_KEY = 'c+)$oj#k4b)4kvlqul*k8ap455s=*c+u563dyqbt96_9fq-rb2'
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['monserrat.pythonanywhere.com','127.0.0.1']
 
 
 # Application definition
