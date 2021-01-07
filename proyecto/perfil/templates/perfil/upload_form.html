@@ -1,13 +1,22 @@
 {% if user.is_authenticated %}
-<div style="padding:40px;margin:40px;border:1px solid #ccc">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.0/css/bootstrap.min.css">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.0/js/bootstrap.min.js"></script>
+    <div class="container">
     <h1>Firma de archivos.</h1>
-    <form method="post" enctype="multipart/form-data">
+    <form method="post" enctype="multipart/form-data" class="form-control">
       {% csrf_token %}
       {{ form.as_p }}
-      <button type="submit">Submit</button>
-    </form><hr>
+        <button type="submit" class="btn btn-primary" name="submit"> Subir </button>
 
-</div>
+    </form>
+
+
+
+
+    </div>
+
     {% else %}
         <a href="{% url 'sign_up' %}">Registrate</a>
         <a href="{% url 'sign_in' %}">Iniciar sesión</a>
