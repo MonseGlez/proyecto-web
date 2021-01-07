@@ -7,6 +7,8 @@
 {% if user.is_authenticated %}
         <h1>Hola {{ user.username }}</h1>
         <a href="{% url 'sign_out' %}">Cerrar sesión</a>
+        <a href="{% url 'fileupload' %}">Firmar archivo</a>
+
     {% else %}
         <a href="{% url 'sign_up' %}">Registrate</a>
         <a href="{% url 'sign_in' %}">Iniciar sesión</a>
