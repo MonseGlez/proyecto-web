@@ -6,7 +6,7 @@ from cryptography.hazmat.primitives import serialization
 from cryptography.hazmat.primitives.asymmetric import ec
 import sys
 
-
+import hashlib
 from cryptography.hazmat.primitives.kdf.hkdf import HKDF
 from cryptography.hazmat.primitives import hashes
 from cryptography.hazmat.backends import default_backend
@@ -24,6 +24,9 @@ from .forms import SignUpForm
 from django.contrib.auth.views import LoginView
 from django.contrib.auth.views import LoginView, LogoutView 
 
+from django.views.generic.edit import CreateView
+from django.urls import reverse_lazy
+from .models import Upload
 
 class SignUpView(CreateView):
     model = Perfil
@@ -33,7 +36,8 @@ class SignUpView(CreateView):
         '''
         En este parte, si el formulario es valido guardamos lo que se obtiene de él y usamos authenticate para que el usuario incie sesión luego de haberse registrado y lo redirigimos al index
         '''
-        form.save()
+
+
         usuario = form.cleaned_data.get('username')
         password = form.cleaned_data.get('password1')
         usuario = authenticate(username=usuario, password=password)
@@ -46,10 +50,13 @@ class SignUpView(CreateView):
         llave_publica = generar_llave_publica(llave_privada)
         with open(path_privada, 'wb') as salida_privada:
             contenido = cifrar(convertir_llave_privada_bytes(llave_privada),llave_aes,iv)
+            contenido2 = descifrar(contenido,llave_aes,iv)
             salida_privada.write(contenido)
+
         with open(path_publica, 'wb') as salida_publica:
             contenido = convertir_llave_publica_bytes(llave_publica)
             salida_publica.write(contenido)
+        form.save()
         login(self.request, usuario)
         return redirect('/')
 
@@ -57,18 +64,14 @@ class SignUpView(CreateView):
 
 class BienvenidaView(TemplateView):
    template_name = 'perfil/bienvenida.html'
+
 class SignInView(LoginView):
    template_name = 'perfil/iniciar_sesion.html'
 
 class SignOutView(LogoutView):
    pass
-def get_pass(request):
-    if request.method =='POST':
-        password = request.POST.get('password1')
-    return password
-
-
-
+class FirmaView(TemplateView):
+    template_name = 'perfil/upload_form.html'
 
 def generar_llave_privada():
     private_key = ec.generate_private_key(ec.SECP384R1(), default_backend())
@@ -151,6 +154,12 @@ def regresar_b_arch(path_archivo):
         contenido = archivo.read()
     return contenido
 
-
-
+class UploadView(CreateView):
+    model = Upload
+    fields = ['upload_file', ]
+    success_url = reverse_lazy('fileupload')
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['documents'] = Upload.objects.all()
+        return context
 
