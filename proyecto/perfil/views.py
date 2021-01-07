@@ -38,7 +38,7 @@ class SignUpView(CreateView):
         '''
         En este parte, si el formulario es valido guardamos lo que se obtiene de él y usamos authenticate para que el usuario incie sesión luego de haberse registrado y lo redirigimos al index
         '''
-
+        form.save()
 
         usuario = form.cleaned_data.get('username')
         password = form.cleaned_data.get('password1')
@@ -58,8 +58,7 @@ class SignUpView(CreateView):
         with open(path_publica, 'wb') as salida_publica:
             contenido = convertir_llave_publica_bytes(llave_publica)
             salida_publica.write(contenido)
-        form.save()
-        login(self.request, usuario)
+        login(self.request,usuario)
         return redirect('/')
 
 
