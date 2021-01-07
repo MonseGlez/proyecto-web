@@ -5,12 +5,5 @@
       {{ form.as_p }}
       <button type="submit">Submit</button>
     </form><hr>
-    <ul>
-    {% for document in documents %}
-        <li>
-            <a href="{{ document.upload_file.url }}">{{ document.upload_file.name }}</a>
-            <small>({{ document.upload_file.size|filesizeformat }}) - {{document.upload_date}}</small>
-        </li>
-    {% endfor %}
-    </ul>
+
 </div>
