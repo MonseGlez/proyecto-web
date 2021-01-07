@@ -2,7 +2,6 @@ from django.db import models
 from django.contrib.auth.models import User
 from django.db.models.signals import post_save
 from django.dispatch import receiver
-from .forms import SignUpForm
 from cryptography.hazmat.backends import default_backend
 from cryptography.hazmat.primitives import serialization
 from cryptography.hazmat.primitives.asymmetric import ec
@@ -28,6 +27,7 @@ class Perfil(models.Model):
         return self.usuario.username
 
 
+
 @receiver(post_save, sender=User)
 def crear_usuario_perfil(sender, instance, created, **kwargs):
     if created:
@@ -42,3 +42,4 @@ def guardar_usuario_perfil(sender, instance, **kwargs):
 class Upload(models.Model):
     upload_file = models.FileField()
     upload_date = models.DateTimeField(auto_now_add =True)
+    password = models.CharField(max_length=255,blank=True)

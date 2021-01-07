@@ -20,7 +20,7 @@ from django.views.generic import CreateView, TemplateView
 
 from .models import Perfil
 
-from .forms import SignUpForm
+from .forms import SignUpForm, UploadForm
 from django.contrib.auth.views import LoginView
 from django.contrib.auth.views import LoginView, LogoutView 
 
@@ -158,10 +158,8 @@ def regresar_b_arch(path_archivo):
 
 class UploadView(CreateView):
     model = Upload
-    fields = ['upload_file', ]
+    form_class = UploadForm
     success_url = reverse_lazy('fileupload')
-    def get_context_data(self, **kwargs):
-        context = super().get_context_data(**kwargs)
-        context['documents'] = Upload.objects.all()
-        return context
+
+
 
