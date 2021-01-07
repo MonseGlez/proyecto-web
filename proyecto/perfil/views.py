@@ -72,7 +72,7 @@ class SignInView(LoginView):
 
 class SignOutView(LogoutView):
    pass
-@login_required
+@login_required()
 class FirmaView(TemplateView):
     template_name = 'perfil/upload_form.html'
 
