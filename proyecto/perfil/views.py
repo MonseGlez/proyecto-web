@@ -40,12 +40,13 @@ class SignUpView(CreateView):
         usuario2 = form.cleaned_data.get('username')
         path_privada = usuario2 + 'privada.pem'
         path_publica = usuario2 + 'publica.pem'
+        iv = os.urandom(16)
+        llave_aes = generar_llave_aes_from_password(password)
         llave_privada = generar_llave_privada()
         llave_publica = generar_llave_publica(llave_privada)
         with open(path_privada, 'wb') as salida_privada:
-            contenido = convertir_llave_privada_bytes(llave_privada)
+            contenido = cifrar(convertir_llave_privada_bytes(llave_privada),llave_aes,iv)
             salida_privada.write(contenido)
-
         with open(path_publica, 'wb') as salida_publica:
             contenido = convertir_llave_publica_bytes(llave_publica)
             salida_publica.write(contenido)
