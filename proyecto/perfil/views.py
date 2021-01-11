@@ -84,7 +84,6 @@ class UploadView(CreateView):
 
         llave_priv = convertir_bytes_llave_privada(contenido)
         firma = firmar(llave_priv,archivo)
-        print(firma)
         nombre_firma = 'firma'+nombre
         remove(path_privada_des)
         with open(nombre_firma,'wb') as firmado:
