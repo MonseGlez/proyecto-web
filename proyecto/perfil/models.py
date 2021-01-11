@@ -39,6 +39,7 @@ def crear_usuario_perfil(sender, instance, created, **kwargs):
 def guardar_usuario_perfil(sender, instance, **kwargs):
     instance.perfil.save()
 
+
 class Upload(models.Model):
     upload_file = models.FileField()
     upload_date = models.DateTimeField(auto_now_add =True)

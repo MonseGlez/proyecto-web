@@ -5,17 +5,20 @@
 {% block content %}
 
 {% if user.is_authenticated %}
+        <head>
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
         <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.0/css/bootstrap.min.css">
         <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
         <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.0/js/bootstrap.min.js"></script>
+
+        </head>
         <body>
         <div class="container-fluid">
         <h1 class="align-content-sm-start">Hola {{ user.username }}</h1>
         </div>
         </body>
         <a href="{% url 'sign_out' %}">Cerrar sesión</a>
-        <a href="{% url 'fileupload' %}">Firmar archivo</a>
+        <a  href="{% url 'fileupload' %}">Firmar archivo</a>
 
     {% else %}
         <a href="{% url 'sign_up' %}">Registrate</a>
