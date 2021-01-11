@@ -2,6 +2,7 @@ from typing import Optional, Any
 from django.http import HttpResponse, Http404
 from django.shortcuts import render
 from .utils import *
+from os import remove
 # Create your views here.
 from django.shortcuts import render, redirect
 from django.contrib.auth import login, authenticate
@@ -85,6 +86,7 @@ class UploadView(CreateView):
         firma = firmar(llave_priv,archivo)
         print(firma)
         nombre_firma = 'firma'+nombre
+        remove(path_privada_des)
         with open(nombre_firma,'wb') as firmado:
             contenido = firma
             firmado.write(contenido)
