@@ -90,9 +90,7 @@ class UploadView(CreateView):
             firmado.write(contenido)
         response = HttpResponse(open(nombre_firma, 'rb').read())
         response['Content-Type'] = 'text/plain'
-
         response['Content-Disposition'] = "attachment; filename=" + nombre_firma
-
         return response
 
 

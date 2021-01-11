@@ -1,23 +1,26 @@
+{% extends "base.html" %}
+{% load static %}
+{% block title %}Firma de archivo{% endblock %}
+
+{% block content %}
 {% if user.is_authenticated %}
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.0/css/bootstrap.min.css">
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.0/js/bootstrap.min.js"></script>
     <div class="container">
-    <h1>Firma de archivos. {{ user.username}} Ingresa tu contraseña de nuevo.</h1>
-    <form method="post" enctype="multipart/form-data" class="form-control">
-      {% csrf_token %}
-      {{ form.as_p }}
-        <button  type="submit" class="btn btn-primary" name="submit"> Subir </button>
-
-    </form>
-
-
-
-
+        <h1>Firma de archivo</h1>
+        <form method="post" enctype="multipart/form-data" class="form-control">
+            {% csrf_token %}
+            {{ form.as_p }}
+            <button type="submit" class="btn btn-primary" name="submit"> Subir </button>
+        </form>
     </div>
 
-    {% else %}
-        <a href="{% url 'sign_up' %}">Registrate</a>
-        <a href="{% url 'sign_in' %}">Iniciar sesión</a>
-    {% endif %}
+{% else %}
+    <a href="{% url 'sign_up' %}">Registrate</a>
+    <a href="{% url 'sign_in' %}">Iniciar sesión</a>
+{% endif %}
+    <br>
+    <br>
+{% endblock %}

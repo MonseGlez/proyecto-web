@@ -1,28 +1,27 @@
 {% extends "base.html" %}
-
-{% block title %}Bievenido{% endblock %}
+{% load static %}
+{% block title %}Bienvenido{% endblock %}
 
 {% block content %}
 
 {% if user.is_authenticated %}
-        <head>
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
         <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.0/css/bootstrap.min.css">
         <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
         <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.0/js/bootstrap.min.js"></script>
 
-        </head>
-        <body>
-        <div class="container-fluid">
+    <body>
+    <div class="container-fluid">
         <h1 class="align-content-sm-start">Hola {{ user.username }}</h1>
-        </div>
-        </body>
-        <a href="{% url 'sign_out' %}">Cerrar sesión</a>
-        <a  href="{% url 'fileupload' %}">Firmar archivo</a>
+        <p> Ha iniciado sesion con exito .</p>
 
-    {% else %}
-        <a href="{% url 'sign_up' %}">Registrate</a>
-        <a href="{% url 'sign_in' %}">Iniciar sesión</a>
-    {% endif %}
-    
+    </div>
+    </body>
+
+    <a href="{% url 'sign_out' %}">Cerrar sesión</a>
+    <a href="{% url 'fileupload' %}">Firmar archivo</a>
+{% else %}
+   <p> Autenticate o registrate ahora</p>
+{% endif %}
+
 {% endblock content %}

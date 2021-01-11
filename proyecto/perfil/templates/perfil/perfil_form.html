@@ -10,18 +10,18 @@
     <body>
     <h2>Registrate</h2>
     <div class="container">
-    <div class="col-form-label">
-    <div class="card card-signin my-5">
-    <div class="card-body">
-    <form class="form-horizontal" action="" method="POST">
-        {% csrf_token %}
-        {{ form.as_p }}
-        <button type="submit" class="btn btn-default" name="submit"> Registrate </button>
+        <div class="col-form-label">
+            <div class="card card-signin my-5">
+                <div class="card-body">
+                    <form class="form-horizontal" action="" method="POST">
+                        {% csrf_token %}
+                        {{ form.as_p }}
+                        <button type="submit" class="btn btn-default" name="submit"> Registrar </button>
 
-    </form>
-    </div>
-    </div>
-    </div>
+                    </form>
+                </div>
+            </div>
+        </div>
     </div>
     </body>
 {% endblock content %}
