@@ -17,8 +17,8 @@ from django.conf.urls import url
 from perfil import views as uploader_views
 from django.contrib import admin
 from django.urls import path
-from perfil.views import SignUpView, BienvenidaView,SignInView,SignOutView,FirmaView
-from django.contrib.auth.views import LoginView, LogoutView 
+from perfil.views import SignUpView, BienvenidaView,SignInView,SignOutView
+from django.contrib.auth.views import LoginView, LogoutView
 
 #urlpatterns = [
 #    path('admin/', admin.site.urls),
@@ -32,6 +32,7 @@ urlpatterns = [
     url(r'^inicia-sesion/$', SignInView.as_view(), name='sign_in'),
     url(r'^cerrar-sesion/$', SignOutView.as_view(), name='sign_out'),
     url(r'^upload/$', uploader_views.UploadView.as_view(), name='fileupload'),
+    #url(r'^verificar-firma',)
     #url(r'^upload', FirmaView.as_view(), name='fileupload'),
 
 ]

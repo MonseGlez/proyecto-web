@@ -27,6 +27,7 @@ def convertir_llave_privada_bytes(llave_privada):
         encoding=serialization.Encoding.PEM,
         format=serialization.PrivateFormat.TraditionalOpenSSL,
         encryption_algorithm=serialization.NoEncryption()
+
     )
     return resultado
 

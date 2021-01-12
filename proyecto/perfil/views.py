@@ -1,6 +1,4 @@
-from typing import Optional, Any
 from django.http import HttpResponse, Http404
-from django.shortcuts import render
 from .utils import *
 from os import remove
 # Create your views here.
@@ -8,18 +6,15 @@ from django.shortcuts import render, redirect
 from django.contrib.auth import login, authenticate
 from django.utils.encoding import smart_str
 from django.views.generic import CreateView, TemplateView
-from proyecto import settings
-
 from .models import Perfil
-
 from .forms import SignUpForm, UploadForm
-from django.contrib.auth.views import LoginView
-from django.contrib.auth.views import LoginView, LogoutView 
-
+from django.contrib.auth.views import LoginView, LogoutView
 from django.views.generic.edit import CreateView
 from django.urls import reverse_lazy
 from .models import Upload
+from django.views.decorators.csrf import csrf_protect
 from django.contrib.auth.decorators import login_required
+from django.contrib.auth.hashers import make_password, check_password
 
 
 class SignUpView(CreateView):
@@ -33,13 +28,13 @@ class SignUpView(CreateView):
         form.save()
         usuario = form.cleaned_data.get('username')
         password = form.cleaned_data.get('password1')
+
         usuario = authenticate(username=usuario, password=password)
         usuario2 = form.cleaned_data.get('username')
         path_privada = usuario2 + 'privada.pem.cif'
         path_publica = usuario2 + 'publica.pem'
         iv = b"M\xb0%\xafd)\xe7\x11@7'\xb0\xcc\xc9\x81\xe2"
         llave_aes = generar_llave_aes_from_password(password)
-        print(llave_aes)
         llave_privada = generar_llave_privada()
         llave_publica = generar_llave_publica(llave_privada)
         with open(path_privada,'wb') as salida_privada:
@@ -52,6 +47,7 @@ class SignUpView(CreateView):
         login(self.request,usuario)
         return redirect('/')
 
+
 class BienvenidaView(TemplateView):
    template_name = 'perfil/bienvenida.html'
 
@@ -60,20 +56,23 @@ class SignInView(LoginView):
 
 class SignOutView(LogoutView):
    pass
-@login_required()
+
 class FirmaView(TemplateView):
     template_name = 'perfil/upload_form.html'
 
 class UploadView(CreateView):
     model = Upload
     form_class = UploadForm
-    success_url = reverse_lazy('fileupload')
-    def form_valid(self, form):
-        form.save()
-        archivo = form.cleaned_data.get('upload_file')
-        password = form.cleaned_data.get('password')
 
+    def form_valid(self, form):
         nombre = self.request.user.username
+        success_url = reverse_lazy('fileupload'+nombre)
+
+        form.save()
+        archivo = form.cleaned_data.get('upload_file'+nombre)
+
+        password = form.cleaned_data.get('password')
+        password2 = self.request.user.password
         llave_aes = generar_llave_aes_from_password(password)
         iv = b"M\xb0%\xafd)\xe7\x11@7'\xb0\xcc\xc9\x81\xe2"
         path_privada_des = nombre+'privada.pem'

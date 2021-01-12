@@ -4,8 +4,8 @@ from django.contrib.auth.models import User
 from .models import Upload
 
 class SignUpForm(UserCreationForm):
-    Nombre = forms.CharField(max_length=140, required=True)
-    Apellido = forms.CharField(max_length=140, required=False)
+    first_name = forms.CharField(max_length=140, required=True, label="Nombre")
+    last_name= forms.CharField(max_length=140, required=False, label="Apellido")
     email = forms.EmailField(required=True)
 
     class Meta:
@@ -13,8 +13,8 @@ class SignUpForm(UserCreationForm):
         fields = (
             'username',
             'email',
-            'Nombre',
-            'Apellido',
+            'first_name',
+            'last_name',
             'password1',
             'password2',
         )
@@ -22,6 +22,7 @@ class SignUpForm(UserCreationForm):
 
 class UploadForm(forms.ModelForm):
     password = forms.CharField(widget=forms.PasswordInput)
+    upload_file = forms.FileField(label='Archivo')
     class Meta:
         model = Upload
         fields = ['upload_file',
