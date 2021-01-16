@@ -8,16 +8,17 @@
     {% if user.is_authenticated %}
           <ul class="nav navbar-nav">
         <li><a href="{% url 'fileupload' %}" >Firmar archivos</a></li>
+        <li><a href="{% url 'verify' %}"> Verificar Firma</a> </li>
           </ul>
         <ul class="nav navbar-nav navbar-right">
-            <li><a href="{% url 'sign_out'%}?next={{request.path}}" ><span class="glyphicon glyphicon-log-in"></span> Cerrar Sesión</a></li>
+            <li><a href="{% url 'sign_out'%}" ><span class="glyphicon glyphicon-log-in"></span> Cerrar Sesión</a></li>
         </ul>
     {% else %}
         <ul class="nav navbar-nav">
             <li><a hre href="{% url 'sign_up' %}" >Registrate</a></li>
         </ul>
         <ul class="nav navbar-nav navbar-right">
-        <li><a href="{% url 'sign_in'%}?next={{request.path}}" style="color: whitesmoke"><span class="glyphicon glyphicon-log-in"></span> Login</a></li>
+        <li><a href="{% url 'sign_in'%}?" style="color: whitesmoke"><span class="glyphicon glyphicon-log-in"></span> Login</a></li>
         </ul>
 
     {% endif %}
