@@ -1,8 +1,8 @@
-from django.http import HttpResponse
+from django.http import HttpResponse, request
 from .utils import *
 from os import remove
 # Create your views here.
-
+from django.contrib import messages
 from django.shortcuts import  redirect
 from django.contrib.auth import login, authenticate
 from django.views.generic import TemplateView
@@ -25,13 +25,10 @@ class SignUpView(CreateView):
         En este parte, si el formulario es valido guardamos lo que se obtiene de él y usamos authenticate para que el usuario incie sesión luego de haberse registrado y lo redirigimos al index
         '''
         form.save()
-
         usuario = form.cleaned_data.get('username')
         password = form.cleaned_data.get('password1')
-
         usuario = authenticate(username=usuario, password=password)
         login(self.request, usuario)
-
         usuario2 = form.cleaned_data.get('username')
         path_privada = './llaves/' +usuario2 + 'privada.pem.cif'
         path_publica = './llaves/' +usuario2 + 'publica.pem'
@@ -104,6 +101,32 @@ class UploadView(CreateView):
 class VerifySign(CreateView):
     model = VerifySign
     form_class = VerifySignForm
+    def form_valid(self, form):
+        form.save()
+        nombre = self.request.user.username
+        path_publica = './llaves/' + nombre + 'publica.pem'
+        llave_publica = convertir_bytes_llave_publica(regresar_b_arch(path_publica))
+        archivo = form.cleaned_data.get('upload_file').read()
+        firma = form.cleaned_data.get('upload_firma').read()
+        try:
+            llave_publica.verify(firma,archivo,ec.ECDSA(hashes.SHA256()))
+            print('La firma es válida')
+            #messages.success(self.request._request, 'La firma es válida.')
+        except InvalidSignature:
+            print("La firma es inválida")
+            #messages.error(self.request._request, 'La firma es inválida.')
+        return redirect('/verificar-firma')
+
+
+
+
+
+
+
+
+
+
+
 
 
 
