@@ -11,6 +11,13 @@
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.0/js/bootstrap.min.js"></script>
     <div class="container">
+    {% if messages %}
+        <ul class="messages">
+            {% for message in messages %}
+                <li{% if message.tags %} class="{{ message.tags }}"{% endif %}>{{ message }}</li>
+            {% endfor %}
+        </ul>
+    {% endif %}
         <h1>Verifica firma de archivo</h1>
 
         <form method="post" enctype="multipart/form-data" class="form-control">
@@ -20,10 +27,6 @@
 
         </form>
     </div>
-
-
-
-
 {% else %}
     <a href="{% url 'sign_up' %}">Registrate</a>
     <a href="{% url 'sign_in' %}">Iniciar sesión</a>

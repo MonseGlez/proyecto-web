@@ -1,4 +1,6 @@
 from django.http import HttpResponse, request
+from requests import Response
+
 from .utils import *
 from os import remove
 # Create your views here.
@@ -111,10 +113,10 @@ class VerifySign(CreateView):
         try:
             llave_publica.verify(firma,archivo,ec.ECDSA(hashes.SHA256()))
             print('La firma es válida')
-            #messages.success(self.request._request, 'La firma es válida.')
+            messages.success(self.request, 'La firma es válida.')
         except InvalidSignature:
             print("La firma es inválida")
-            #messages.error(self.request._request, 'La firma es inválida.')
+            messages.error(self.request, 'La firma es inválida.')
         return redirect('/verificar-firma')
 
 
