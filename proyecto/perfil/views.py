@@ -49,7 +49,6 @@ class SignUpView(CreateView):
             contenido = convertir_llave_publica_bytes(llave_publica)
             salida_publica.write(contenido)
 
-        return redirect('/')
 
 
 class BienvenidaView(TemplateView):
