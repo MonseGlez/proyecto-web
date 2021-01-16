@@ -3,17 +3,13 @@ from django.contrib.auth.models import User
 from django.db.models.signals import post_save
 from django.dispatch import receiver
 
-
-
 # Create your models here.
 class Perfil(models.Model):
     usuario = models.OneToOneField(User, on_delete=models.CASCADE)
     llave_privada = models.BinaryField()
     llave_publica = models.BinaryField()
 
-
-
-    # Python 3
+# Python 3
     def __str__(self):
         return self.usuario.username
 
@@ -30,13 +26,10 @@ def guardar_usuario_perfil(sender, instance, **kwargs):
 
     instance.perfil.save()
 
-
-
 class Upload(models.Model):
     upload_file = models.FileField()
     upload_date = models.DateTimeField(auto_now_add=True)
     password = models.CharField(max_length=255, blank=True)
-
 
 class VerifySign(models.Model):
     upload_file = models.FileField()

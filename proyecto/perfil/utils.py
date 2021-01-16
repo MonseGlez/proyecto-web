@@ -1,15 +1,10 @@
 from cryptography.exceptions import InvalidSignature
 from cryptography.hazmat.primitives import serialization
 from cryptography.hazmat.primitives.asymmetric import ec
-from cryptography.hazmat.backends import default_backend
-import sys
-import hashlib
 from cryptography.hazmat.primitives.kdf.hkdf import HKDF
 from cryptography.hazmat.primitives import hashes
 from cryptography.hazmat.backends import default_backend
 from cryptography.hazmat.primitives.ciphers import Cipher, algorithms, modes
-
-import os
 
 
 def generar_llave_privada():
@@ -86,6 +81,8 @@ def descifrar(cifrado, llave_aes, iv):
     plano = descifrador.update(cifrado)
     descifrador.finalize()
     return plano
+
+
 def regresar_t_arch(path_archivo):
     contenido = ''
     with open(path_archivo, 'rw') as archivo:
@@ -98,13 +95,16 @@ def regresar_b_arch(path_archivo):
     with open(path_archivo, 'rb') as archivo:
         contenido = archivo.read()
     return contenido
-def firmar(llave_privada,datos_firmar):
+
+
+def firmar(llave_privada, datos_firmar):
     firma = llave_privada.sign(datos_firmar, ec.ECDSA(hashes.SHA256()))
     return firma
-def verificarfirma(public_key,signature,datos_a_firmar):
+
+
+def verificarfirma(public_key, signature, datos_a_firmar):
     try:
         public_key.verify(signature, datos_a_firmar, ec.ECDSA(hashes.SHA256()))
         print('La firma es válida')
     except InvalidSignature:
         print('La firma es inválida')
-

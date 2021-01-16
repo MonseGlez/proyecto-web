@@ -1,22 +1,17 @@
-from django.http import HttpResponse, request
+from django.http import HttpResponse
 from .utils import *
 from os import remove
 # Create your views here.
-from django.contrib.auth import get_user_model
-from django.contrib.auth.models import User
-from django.shortcuts import render, redirect
+
+from django.shortcuts import  redirect
 from django.contrib.auth import login, authenticate
-from django.utils.encoding import smart_str
 from django.views.generic import TemplateView
 from .models import Perfil
 from .forms import SignUpForm, UploadForm, VerifySignForm
 from django.contrib.auth.views import LoginView, LogoutView
 from django.views.generic.edit import CreateView
-from django.urls import reverse_lazy
 from .models import Upload, VerifySign
-from django.views.decorators.csrf import csrf_protect
-from django.contrib.auth.decorators import login_required
-from django.contrib.auth.hashers import make_password, check_password
+
 
 
 
@@ -52,6 +47,7 @@ class SignUpView(CreateView):
             contenido = convertir_llave_publica_bytes(llave_publica)
             salida_publica.write(contenido)
         salida_publica.close()
+        return redirect('/')
 
 
 class BienvenidaView(TemplateView):
@@ -80,35 +76,35 @@ class UploadView(CreateView):
         form.save()
         nombre = self.request.user.username
         archivo = form.cleaned_data.get('upload_file').read()
+        archivo_nombre = form.cleaned_data.get('upload_file').name
         password = form.cleaned_data.get('password')
         llave_aes = generar_llave_aes_from_password(password)
         iv = b"M\xb0%\xafd)\xe7\x11@7'\xb0\xcc\xc9\x81\xe2"
         path_privada_des ='./llaves/' + nombre + 'privada.pem'
         path_privada_cif = './llaves/' +nombre + 'privada.pem.cif'
-
         with open(path_privada_des, 'wb') as salida_des:
             contenido = descifrar(regresar_b_arch(path_privada_cif), llave_aes, iv)
             salida_des.write(contenido)
         salida_des.close()
         llave_priv = convertir_bytes_llave_privada(contenido)
         firma = firmar(llave_priv, archivo)
-        nombre_firma = 'firma' + nombre
-        print (firma)
+        nombre_firma = './firmas/firma' + nombre + archivo_nombre
         remove(path_privada_des)
         with open(nombre_firma, 'wb') as firmado:
             contenido = firma
             firmado.write(contenido)
-        print(contenido)
-
+        firmado.close()
         response = HttpResponse(open(nombre_firma, 'rb').read())
         response['Content-Type'] = 'text/plain'
-        response['Content-Disposition'] = "attachment; filename=" + nombre_firma
+        response['Content-Disposition'] = "attachment; filename=firma"+nombre +archivo_nombre
         return response
+
 
 
 class VerifySign(CreateView):
     model = VerifySign
     form_class = VerifySignForm
+
 
 
 
