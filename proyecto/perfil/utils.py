@@ -99,8 +99,7 @@ def regresar_b_arch(path_archivo):
         contenido = archivo.read()
     return contenido
 def firmar(llave_privada,datos_firmar):
-    datos = b'datos_firmar'
-    firma = llave_privada.sign(datos, ec.ECDSA(hashes.SHA256()))
+    firma = llave_privada.sign(datos_firmar, ec.ECDSA(hashes.SHA256()))
     return firma
 def verificarfirma(public_key,signature,datos_a_firmar):
     try:

@@ -1,4 +1,4 @@
-from django.http import HttpResponse, Http404
+from django.http import HttpResponse, request
 from .utils import *
 from os import remove
 # Create your views here.
@@ -17,6 +17,8 @@ from .models import Upload, VerifySign
 from django.views.decorators.csrf import csrf_protect
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.hashers import make_password, check_password
+
+
 
 
 class SignUpView(CreateView):
@@ -45,10 +47,11 @@ class SignUpView(CreateView):
         with open(path_privada, 'wb') as salida_privada:
             contenido = cifrar(convertir_llave_privada_bytes(llave_privada), llave_aes, iv)
             salida_privada.write(contenido)
+        salida_privada.close()
         with open(path_publica, 'wb') as salida_publica:
             contenido = convertir_llave_publica_bytes(llave_publica)
             salida_publica.write(contenido)
-
+        salida_publica.close()
 
 
 class BienvenidaView(TemplateView):
@@ -76,20 +79,21 @@ class UploadView(CreateView):
     def form_valid(self, form):
         form.save()
         nombre = self.request.user.username
-        archivo = (form.cleaned_data.get('upload_file'))
+        archivo = form.cleaned_data.get('upload_file').read()
         password = form.cleaned_data.get('password')
         llave_aes = generar_llave_aes_from_password(password)
         iv = b"M\xb0%\xafd)\xe7\x11@7'\xb0\xcc\xc9\x81\xe2"
         path_privada_des ='./llaves/' + nombre + 'privada.pem'
         path_privada_cif = './llaves/' +nombre + 'privada.pem.cif'
+
         with open(path_privada_des, 'wb') as salida_des:
             contenido = descifrar(regresar_b_arch(path_privada_cif), llave_aes, iv)
             salida_des.write(contenido)
-
+        salida_des.close()
         llave_priv = convertir_bytes_llave_privada(contenido)
-        firma = firmar(llave_priv, (archivo))
-
+        firma = firmar(llave_priv, archivo)
         nombre_firma = 'firma' + nombre
+        print (firma)
         remove(path_privada_des)
         with open(nombre_firma, 'wb') as firmado:
             contenido = firma
@@ -105,6 +109,7 @@ class UploadView(CreateView):
 class VerifySign(CreateView):
     model = VerifySign
     form_class = VerifySignForm
+
 
 
 
