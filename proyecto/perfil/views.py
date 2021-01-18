@@ -1,6 +1,6 @@
 from django.http import HttpResponse, request
 from requests import Response
-
+from django.contrib.auth.hashers import check_password
 from .utils import *
 from os import remove
 # Create your views here.
@@ -13,10 +13,8 @@ from .forms import SignUpForm, UploadForm, VerifySignForm
 from django.contrib.auth.views import LoginView, LogoutView
 from django.views.generic.edit import CreateView
 from .models import Upload, VerifySign
-
-
-
-
+from django.contrib.auth.models import User
+from django.views.generic import ListView
 
 class SignUpView(CreateView):
     model = Perfil
@@ -68,39 +66,38 @@ class VerifySingView(TemplateView):
 class UploadView(CreateView):
     model = Upload
     form_class = UploadForm
-
-    #success_url = reverse_lazy('fileupload')
-
     def form_valid(self, form):
         form.save()
         nombre = self.request.user.username
+        currentpassword = self.request.user.password
         archivo = form.cleaned_data.get('upload_file').read()
         archivo_nombre = form.cleaned_data.get('upload_file').name
         password = form.cleaned_data.get('password')
-        llave_aes = generar_llave_aes_from_password(password)
-        iv = b"M\xb0%\xafd)\xe7\x11@7'\xb0\xcc\xc9\x81\xe2"
-        path_privada_des ='./llaves/' + nombre + 'privada.pem'
-        path_privada_cif = './llaves/' +nombre + 'privada.pem.cif'
-        with open(path_privada_des, 'wb') as salida_des:
-            contenido = descifrar(regresar_b_arch(path_privada_cif), llave_aes, iv)
-            salida_des.write(contenido)
-        salida_des.close()
-        llave_priv = convertir_bytes_llave_privada(contenido)
-        firma = firmar(llave_priv, archivo)
-        nombre_firma = './firmas/firma' + nombre + archivo_nombre
-        remove(path_privada_des)
-        with open(nombre_firma, 'wb') as firmado:
-            contenido = firma
-            firmado.write(contenido)
-        firmado.close()
-        response = HttpResponse(open(nombre_firma, 'rb').read())
-        response['Content-Type'] = 'text/plain'
-        response['Content-Disposition'] = "attachment; filename=firma"+nombre +archivo_nombre
-        return response
-
-
-
-class VerifySign(CreateView):
+        matchcheck= check_password(password, currentpassword)
+        print(matchcheck)
+        if matchcheck is not False:
+            llave_aes = generar_llave_aes_from_password(password)
+            iv = b"M\xb0%\xafd)\xe7\x11@7'\xb0\xcc\xc9\x81\xe2"
+            path_privada_des ='./llaves/' + nombre + 'privada.pem'
+            path_privada_cif = './llaves/' +nombre + 'privada.pem.cif'
+            with open(path_privada_des, 'wb') as salida_des:
+                contenido = descifrar(regresar_b_arch(path_privada_cif), llave_aes, iv)
+                salida_des.write(contenido)
+            llave_priv = convertir_bytes_llave_privada(contenido)
+            firma = firmar(llave_priv, archivo)
+            nombre_firma = './firmas/firma' + nombre + archivo_nombre
+            remove(path_privada_des)
+            with open(nombre_firma, 'wb') as firmado:
+                contenido = firma
+                firmado.write(contenido)
+            response = HttpResponse(open(nombre_firma, 'rb').read())
+            response['Content-Type'] = 'text/plain'
+            response['Content-Disposition'] = "attachment; filename=firma"+nombre +archivo_nombre
+            return response
+        else:
+            messages.error(self.request,'La contraseña que ingresaste no coincide, intenta de nuevo')
+            return redirect('/upload')
+class VerifySign(CreateView ):
     model = VerifySign
     form_class = VerifySignForm
     def form_valid(self, form):
@@ -110,6 +107,7 @@ class VerifySign(CreateView):
         llave_publica = convertir_bytes_llave_publica(regresar_b_arch(path_publica))
         archivo = form.cleaned_data.get('upload_file').read()
         firma = form.cleaned_data.get('upload_firma').read()
+
         try:
             llave_publica.verify(firma,archivo,ec.ECDSA(hashes.SHA256()))
             print('La firma es válida')
@@ -118,6 +116,8 @@ class VerifySign(CreateView):
             print("La firma es inválida")
             messages.error(self.request, 'La firma es inválida.')
         return redirect('/verificar-firma')
+
+
 
 
 

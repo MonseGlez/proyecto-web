@@ -14,7 +14,7 @@ Including another URLconf
     2. Add a URL to urlpatterns:  path('blog/', include('blog.urls'))
 """
 from django.conf.urls import url
-from perfil import views as uploader_views
+from perfil import views as uploader_views, views
 from django.contrib import admin
 from django.urls import path
 from perfil.views import SignUpView, BienvenidaView,SignInView,SignOutView,VerifySign
@@ -32,6 +32,5 @@ urlpatterns = [
     url(r'^cerrar-sesion/$', SignOutView.as_view(), name='sign_out'),
     url(r'^upload/$', uploader_views.UploadView.as_view(), name='fileupload'),
     url(r'^verificar-firma',VerifySign.as_view(),name='verify'),
-    #url(r'^upload', FirmaView.as_view(), name='fileupload'),
 
 ]
