@@ -133,29 +133,26 @@ class VerifySign(CreateView):
             messages.error(self.request, 'el usuario no existe, no tiene firmas')
             return redirect('/verificar-firma')
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+class updateKey():
+    def seleccion(self):
+        usuario = self.request.user.username
+        password = self.request.user.password
+        path_privada = './llaves/' + usuario + 'privada.pem.cif'
+        path_publica = './llaves/' + usuario + 'publica.pem'
+        #primero eliminamos las llaves
+        os.remove(path_privada)
+        os.remove(path_publica)
+        #se procede a crear las nuevas llaves
+        iv = b"M\xb0%\xafd)\xe7\x11@7'\xb0\xcc\xc9\x81\xe2"
+        llave_aes = generar_llave_aes_from_password(password)
+        llave_privada = generar_llave_privada()
+        llave_publica = generar_llave_publica(llave_privada)
+        with open(path_privada, 'wb') as salida_privada:
+            contenido = cifrar(convertir_llave_privada_bytes(llave_privada), llave_aes, iv)
+            salida_privada.write(contenido)
+        salida_privada.close()
+        with open(path_publica, 'wb') as salida_publica:
+            contenido = convertir_llave_publica_bytes(llave_publica)
+            salida_publica.write(contenido)
+        salida_publica.close()
 
