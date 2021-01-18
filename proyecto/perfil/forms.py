@@ -37,8 +37,8 @@ class UploadForm(forms.ModelForm):
 class VerifySignForm(forms.ModelForm):
     upload_file = forms.FileField(label='Sube archivo verificar firma', required=True)
     upload_firma = forms.FileField(label='Sube archivo que contiene la firma', required=True)
-
+    usuario = forms.CharField(label='Ingresa el nombre del usuario de la firma')
     class Meta:
         model = Upload
         fields = ['upload_file',
-                  'upload_firma']
+                  'upload_firma' ,'usuario']

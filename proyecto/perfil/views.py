@@ -1,13 +1,16 @@
+from collections import UserList
+
 from django.http import HttpResponse, request
 from requests import Response
 from django.contrib.auth.hashers import check_password
 from .utils import *
 from os import remove
 # Create your views here.
+from django.forms.models import model_to_dict
 from django.contrib import messages
-from django.shortcuts import  redirect
+from django.shortcuts import redirect, render, render_to_response
 from django.contrib.auth import login, authenticate
-from django.views.generic import TemplateView
+from django.views.generic import TemplateView, DetailView
 from .models import Perfil
 from .forms import SignUpForm, UploadForm, VerifySignForm
 from django.contrib.auth.views import LoginView, LogoutView
@@ -74,7 +77,6 @@ class UploadView(CreateView):
         archivo_nombre = form.cleaned_data.get('upload_file').name
         password = form.cleaned_data.get('password')
         matchcheck= check_password(password, currentpassword)
-        print(matchcheck)
         if matchcheck is not False:
             llave_aes = generar_llave_aes_from_password(password)
             iv = b"M\xb0%\xafd)\xe7\x11@7'\xb0\xcc\xc9\x81\xe2"
@@ -93,29 +95,42 @@ class UploadView(CreateView):
             response = HttpResponse(open(nombre_firma, 'rb').read())
             response['Content-Type'] = 'text/plain'
             response['Content-Disposition'] = "attachment; filename=firma"+nombre +archivo_nombre
+            remove(nombre_firma)
             return response
         else:
             messages.error(self.request,'La contraseña que ingresaste no coincide, intenta de nuevo')
             return redirect('/upload')
-class VerifySign(CreateView ):
+
+class VerifySign(CreateView):
     model = VerifySign
     form_class = VerifySignForm
     def form_valid(self, form):
+        users = [str(user) for user in User.objects.all()]
         form.save()
-        nombre = self.request.user.username
-        path_publica = './llaves/' + nombre + 'publica.pem'
-        llave_publica = convertir_bytes_llave_publica(regresar_b_arch(path_publica))
-        archivo = form.cleaned_data.get('upload_file').read()
-        firma = form.cleaned_data.get('upload_firma').read()
 
-        try:
-            llave_publica.verify(firma,archivo,ec.ECDSA(hashes.SHA256()))
-            print('La firma es válida')
-            messages.success(self.request, 'La firma es válida.')
-        except InvalidSignature:
-            print("La firma es inválida")
-            messages.error(self.request, 'La firma es inválida.')
-        return redirect('/verificar-firma')
+        usuario = form.cleaned_data.get('usuario')
+        if usuario in users:
+            path_publica = './llaves/' + usuario + 'publica.pem'
+            llave_publica = convertir_bytes_llave_publica(regresar_b_arch(path_publica))
+            archivo = form.cleaned_data.get('upload_file').read()
+            firma = form.cleaned_data.get('upload_firma').read()
+            try:
+                llave_publica.verify(firma,archivo,ec.ECDSA(hashes.SHA256()))
+                print('La firma es válida')
+                messages.success(self.request, 'La firma es válida.')
+                return redirect('/verificar-firma')
+            except InvalidSignature:
+                print("La firma es inválida")
+                messages.error(self.request, 'La firma es inválida.')
+                return redirect('/verificar-firma')
+        else:
+
+            messages.error(self.request, 'el usuario no existe, no tiene firmas')
+            return redirect('/verificar-firma')
+
+
+
+
 
 
 

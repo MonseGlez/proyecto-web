@@ -6,8 +6,9 @@ from django.dispatch import receiver
 # Create your models here.
 class Perfil(models.Model):
     usuario = models.OneToOneField(User, on_delete=models.CASCADE)
-    llave_privada = models.BinaryField()
-    llave_publica = models.BinaryField()
+
+
+
 
 # Python 3
     def __str__(self):
@@ -32,5 +33,7 @@ class Upload(models.Model):
     password = models.CharField(max_length=255, blank=True)
 
 class VerifySign(models.Model):
+    usuario = models.CharField(max_length=255,blank=True)
     upload_file = models.FileField()
     upload_sign = models.FileField()
+
