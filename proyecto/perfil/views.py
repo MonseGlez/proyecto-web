@@ -18,6 +18,7 @@ from django.views.generic.edit import CreateView
 from .models import Upload, VerifySign
 from django.contrib.auth.models import User
 from django.views.generic import ListView
+from threading import Timer
 
 class SignUpView(CreateView):
     model = Perfil
@@ -47,6 +48,10 @@ class SignUpView(CreateView):
             contenido = convertir_llave_publica_bytes(llave_publica)
             salida_publica.write(contenido)
         salida_publica.close()
+        #se crea un hilo para realize la funcion de invalidar las llaves despues de x tiempo
+        h = Timer(600.0, deadkey, (usuario2,))
+        h.start()
+
         return redirect('/')
 
 

@@ -5,6 +5,7 @@ from cryptography.hazmat.primitives.kdf.hkdf import HKDF
 from cryptography.hazmat.primitives import hashes
 from cryptography.hazmat.backends import default_backend
 from cryptography.hazmat.primitives.ciphers import Cipher, algorithms, modes
+import os
 
 
 def generar_llave_privada():
@@ -108,3 +109,10 @@ def verificarfirma(public_key, signature, datos_a_firmar):
         print('La firma es válida')
     except InvalidSignature:
         print('La firma es inválida')
+
+
+def deadkey(usuario):
+    path_privada = './llaves/' + usuario + 'privada.pem.cif'
+    path_publica = './llaves/' + usuario + 'publica.pem'
+    os.remove(path_privada)
+    os.remove(path_publica)
