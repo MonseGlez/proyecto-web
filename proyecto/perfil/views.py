@@ -49,7 +49,7 @@ class SignUpView(CreateView):
             contenido = convertir_llave_publica_bytes(llave_publica)
             salida_publica.write(contenido)
         salida_publica.close()
-        #se crea un hilo para realize la funcion de invalidar las llaves despues de x tiempo
+        #se utiliza un temporizador para realize la funcion de invalidar las llaves despues de x tiempo
         h = Timer(600.0, deadkey, (usuario2,))
         h.start()
 
@@ -181,6 +181,9 @@ class updateKey(CreateView):
                 contenido = convertir_llave_publica_bytes(llave_publica)
                 salida_publica.write(contenido)
             salida_publica.close()
+            # se utiliza un temporizador para realize la funcion de invalidar las llaves despues de x tiempo
+            h = Timer(600.0, deadkey, (usuario,))
+            h.start()
             messages.success(self.request, 'Nuevas llaves generadas')
             return redirect('/nueva_llave')
         else:
