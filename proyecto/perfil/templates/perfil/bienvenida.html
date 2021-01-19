@@ -12,7 +12,7 @@
 
     <body>
     <div class="container-fluid">
-        <h1 class="align-content-sm-start">Hola {{ user.username }}</h1>
+        <h1 class="align-content-sm-start">Hola {{ user.username |escape}}</h1>
         <p> Ha iniciado sesion con exito .</p>
 
     </div>

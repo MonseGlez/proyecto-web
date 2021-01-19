@@ -20,19 +20,21 @@ from django.urls import path
 from perfil.views import SignUpView, BienvenidaView,SignInView,SignOutView,VerifySign, updateKey
 from django.contrib.auth.views import LoginView, LogoutView
 from django.contrib.auth.decorators import login_required
+from django.views.decorators.csrf import csrf_protect
+
 
 #urlpatterns = [
 #    path('admin/', admin.site.urls),
 #]
 
 urlpatterns = [
-    url(r'^admin/', admin.site.urls),
-    url(r'^$', login_required(BienvenidaView.as_view()), name='bienvenida'),
-    url(r'^registrate/$', SignUpView.as_view(), name='sign_up'),
-    url(r'^inicia-sesion/$', SignInView.as_view(), name='sign_in'),
-    url(r'^cerrar-sesion/$', SignOutView.as_view(), name='sign_out'),
-    url(r'^upload/$', login_required(uploader_views.UploadView.as_view()), name='fileupload'),
-    url(r'^verificar-firma',login_required(VerifySign.as_view()),name='verify'),
-    url(r'^nueva_llave', login_required(updateKey.as_view()),name='nueva_llave' ),
+    url(r'^admin/', csrf_protect(admin.site.urls)),
+    url(r'^$', csrf_protect(login_required(BienvenidaView.as_view())), name='bienvenida'),
+    url(r'^registrate/$', csrf_protect(SignUpView.as_view()), name='sign_up'),
+    url(r'^inicia-sesion/$', csrf_protect(SignInView.as_view()), name='sign_in'),
+    url(r'^cerrar-sesion/$', csrf_protect(SignOutView.as_view()), name='sign_out'),
+    url(r'^upload/$', csrf_protect(login_required(uploader_views.UploadView.as_view())), name='fileupload'),
+    url(r'^verificar-firma',csrf_protect(login_required(VerifySign.as_view())),name='verify'),
+    url(r'^nueva_llave', csrf_protect(login_required(updateKey.as_view())),name='nueva_llave' ),
 
 ]
