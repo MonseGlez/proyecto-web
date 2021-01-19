@@ -1,12 +1,84 @@
 {% load static %}
 
+
 <nav class="container-fluid navbar-inverse navbar-fixed-top navbar-collapse" style="background-color: lightslategrey" >
   <div class="navbar-header">
     <a class="navbar-brand" href="{% url 'bienvenida' %}?next={{request.path}}" style="color: whitesmoke">Home</a>
   </div>
 
     {% if user.is_authenticated %}
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
+        <script>
+$(function () {
+  var TTimer = {
+    startedTime: new Date(),
+    restoredFromSession: false,
+    started: false,
+    minutes: 0,
+    seconds: 0,
+    tick: function tick() {
+      // Since setInterval is not reliable in inactive windows/tabs we are using date diff.
+      var diffInSeconds = Math.floor((new Date() - this.startedTime) / 1000);
+      this.minutes = Math.floor(diffInSeconds / 60);
+      this.seconds = diffInSeconds - this.minutes * 60;
+      this.render();
+      this.updateSession();
+    },
+    utilities: {
+      pad: function pad(number) {
+        return number < 10 ? "0" + number : number;
+      }
+    },
+    container: function container() {
+      return $(document);
+    },
+    render: function render() {
+      this.container()
+        .find("#timer-minutes")
+        .text(this.utilities.pad(this.minutes));
+      this.container()
+        .find("#timer-seconds")
+        .text(this.utilities.pad(this.seconds));
+    },
+    updateSession: function updateSession() {
+      sessionStorage.setItem("timerStartedTime", this.startedTime);
+    },
+    clearSession: function clearSession() {
+      sessionStorage.removeItem("timerStartedTime");
+    },
+    restoreFromSession: function restoreFromSession() {
+      // Using sessionsStorage to make the timer persistent
+      if (typeof Storage == "undefined") {
+        console.log("No sessionStorage Support");
+        return;
+      }
+
+      if (sessionStorage.getItem("timerStartedTime") !== null) {
+        this.restoredFromSession = true;
+        this.startedTime = new Date(sessionStorage.getItem("timerStartedTime"));
+      }
+    },
+    start: function start() {
+      this.restoreFromSession();
+      this.stop();
+      this.started = true;
+      this.tick();
+      this.timerId = setInterval(this.tick.bind(this), 1000);
+    },
+    stop: function stop() {
+      this.started = false;
+      clearInterval(this.timerId);
+      this.render();
+    }
+  };
+
+  TTimer.start();
+});
+</script>
+
           <ul class="nav navbar-nav">
+          <span id="timer-minutes">00</span> :
+         <span id="timer-seconds">00</span>
         <li><a href="{% url 'fileupload' %}" >Firmar archivos</a></li>
         <li><a href="{% url 'verify' %}"> Verificar Firma</a> </li>
           <li><a href="{% url 'nueva_llave' %}">Nuevas llaves</a> </li>
@@ -14,6 +86,7 @@
         <ul class="nav navbar-nav navbar-right">
             <li><a href="{% url 'sign_out'%}" ><span class="glyphicon glyphicon-log-in"></span> Cerrar Sesión</a></li>
         </ul>
+
     {% else %}
         <ul class="nav navbar-nav">
             <li><a hre href="{% url 'sign_up' %}" >Registrate</a></li>
@@ -21,6 +94,7 @@
         <ul class="nav navbar-nav navbar-right">
         <li><a href="{% url 'sign_in'%}?" style="color: whitesmoke"><span class="glyphicon glyphicon-log-in"></span> Login</a></li>
         </ul>
+
 
     {% endif %}
 </nav>

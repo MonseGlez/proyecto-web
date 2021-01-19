@@ -7,20 +7,14 @@ from django.dispatch import receiver
 class Perfil(models.Model):
     usuario = models.OneToOneField(User, on_delete=models.CASCADE)
 
-
-
-
 # Python 3
     def __str__(self):
         return self.usuario.username
-
 
 @receiver(post_save, sender=User)
 def crear_usuario_perfil(sender, instance, created, **kwargs):
     if created:
         Perfil.objects.create(usuario=instance)
-
-
 
 @receiver(post_save, sender=User)
 def guardar_usuario_perfil(sender, instance, **kwargs):
@@ -31,6 +25,7 @@ class Upload(models.Model):
     upload_file = models.FileField()
     upload_date = models.DateTimeField(auto_now_add=True)
     password = models.CharField(max_length=255, blank=True)
+
 
 class VerifySign(models.Model):
     usuario = models.CharField(max_length=255,blank=True)
