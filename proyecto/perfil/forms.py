@@ -1,7 +1,7 @@
 from django import forms
 from django.contrib.auth.forms import UserCreationForm, AuthenticationForm
 from django.contrib.auth.models import User
-from .models import Upload, VerifySign
+from .models import Upload, VerifySign, updateKey
 
 
 class SignUpForm(UserCreationForm):
@@ -42,3 +42,11 @@ class VerifySignForm(forms.ModelForm):
         model = Upload
         fields = ['upload_file',
                   'upload_firma' ,'usuario']
+
+class updateKeyForm(forms.ModelForm):
+    password = forms.CharField(widget=forms.PasswordInput, required=True, label="Ingresa tu contraseña")
+    class Meta:
+        model = updateKey
+        fields = ['password']
+
+

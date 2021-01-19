@@ -37,3 +37,8 @@ class VerifySign(models.Model):
     upload_file = models.FileField()
     upload_sign = models.FileField()
 
+class updateKey(models.Model):
+    password = models.CharField(max_length=255, blank=True)
+
+
+

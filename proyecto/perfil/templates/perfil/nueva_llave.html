@@ -1,15 +1,13 @@
 {% extends "base.html" %}
 {% load static %}
-{% block title %}Firma de archivo{% endblock %}
-
+{% block title %} Nueva Llave{% endblock %}
 {% block content %}
-{% csrf_token %}
-{% if user.is_authenticated %}
+   {% csrf_token %}
+
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.0/css/bootstrap.min.css">
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.0/js/bootstrap.min.js"></script>
-
     {% if messages %}
         <ul class="messages">
             {% for message in messages %}
@@ -17,22 +15,22 @@
             {% endfor %}
         </ul>
     {% endif %}
-
-
-
-    <h1>Verifica firma de archivo</h1>
+    <body>
+    <h2>Generar nuevas llaves</h2>
     <div class="container">
-        <form method="post" enctype="multipart/form-data" class="form-control">
-            {% csrf_token %}
-            {{ form.as_p }}
-            <button type="submit" class="btn btn-primary" name="submit"> Subir </button>
-        </form>
+        <div class="col-form-label">
+            <div class="card card-signin my-5">
+                <div class="card-body">
+                    <form class="form-horizontal" action="" method="POST">
+                        {% csrf_token %}
+                        {{ form.as_p }}
+                        <button type="submit" class="btn btn-default" name="submit"> Generar </button>
+
+                    </form>
+                </div>
+            </div>
+        </div>
     </div>
-{% else %}
-    <div class="container">
-    <a href="{% url 'sign_up' %}">Registrate</a>
-    <a href="{% url 'sign_in' %}">Iniciar sesión</a>
-    </div>
-{% endif %}
+    </body>
+
 {% endblock %}
-

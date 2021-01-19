@@ -8,17 +8,18 @@ from os import remove
 # Create your views here.
 from django.forms.models import model_to_dict
 from django.contrib import messages
-from django.shortcuts import redirect, render, render_to_response
+from django.shortcuts import redirect, render
 from django.contrib.auth import login, authenticate
 from django.views.generic import TemplateView, DetailView
 from .models import Perfil
-from .forms import SignUpForm, UploadForm, VerifySignForm
+from .forms import SignUpForm, UploadForm, VerifySignForm, updateKeyForm
 from django.contrib.auth.views import LoginView, LogoutView
 from django.views.generic.edit import CreateView
-from .models import Upload, VerifySign
+from .models import Upload, VerifySign, updateKey
 from django.contrib.auth.models import User
 from django.views.generic import ListView
 from threading import Timer
+import os.path
 
 class SignUpView(CreateView):
     model = Perfil
@@ -67,8 +68,12 @@ class SignOutView(LogoutView):
     pass
 
 
+
 class VerifySingView(TemplateView):
     template_name = 'perfil/verifysign_form.html'
+
+class updateKey(TemplateView):
+    template_name = 'perfil/nueva_llave.html'
 
 
 class UploadView(CreateView):
@@ -82,6 +87,7 @@ class UploadView(CreateView):
         archivo_nombre = form.cleaned_data.get('upload_file').name
         password = form.cleaned_data.get('password')
         matchcheck= check_password(password, currentpassword)
+        print(matchcheck)
         if matchcheck is not False:
             llave_aes = generar_llave_aes_from_password(password)
             iv = b"M\xb0%\xafd)\xe7\x11@7'\xb0\xcc\xc9\x81\xe2"
@@ -133,26 +139,48 @@ class VerifySign(CreateView):
             messages.error(self.request, 'el usuario no existe, no tiene firmas')
             return redirect('/verificar-firma')
 
-class updateKey():
-    def seleccion(self):
+
+
+class updateKey(CreateView):
+
+    model = updateKey
+    form_class = updateKeyForm
+    template_name = "perfil/nueva_llave.html"
+
+    def form_valid(self, form):
         usuario = self.request.user.username
-        password = self.request.user.password
-        path_privada = './llaves/' + usuario + 'privada.pem.cif'
-        path_publica = './llaves/' + usuario + 'publica.pem'
-        #primero eliminamos las llaves
-        os.remove(path_privada)
-        os.remove(path_publica)
-        #se procede a crear las nuevas llaves
-        iv = b"M\xb0%\xafd)\xe7\x11@7'\xb0\xcc\xc9\x81\xe2"
-        llave_aes = generar_llave_aes_from_password(password)
-        llave_privada = generar_llave_privada()
-        llave_publica = generar_llave_publica(llave_privada)
-        with open(path_privada, 'wb') as salida_privada:
-            contenido = cifrar(convertir_llave_privada_bytes(llave_privada), llave_aes, iv)
-            salida_privada.write(contenido)
-        salida_privada.close()
-        with open(path_publica, 'wb') as salida_publica:
-            contenido = convertir_llave_publica_bytes(llave_publica)
-            salida_publica.write(contenido)
-        salida_publica.close()
+        password = form.cleaned_data.get('password')
+        currentpassword = self.request.user.password
+        matchcheck= check_password(password, currentpassword)
+
+        if matchcheck is not False:
+            path_privada = './llaves/' + usuario + 'privada.pem.cif'
+            path_publica = './llaves/' + usuario + 'publica.pem'
+            #primero eliminamos las llaves
+            if os.path.isfile(path_privada):
+                os.remove(path_privada)
+            if os.path.isfile(path_publica):
+                os.remove(path_publica)
+
+            #se procede a crear las nuevas llaves
+            iv = b"M\xb0%\xafd)\xe7\x11@7'\xb0\xcc\xc9\x81\xe2"
+            llave_aes = generar_llave_aes_from_password(password)
+            llave_privada = generar_llave_privada()
+            llave_publica = generar_llave_publica(llave_privada)
+            with open(path_privada, 'wb') as salida_privada:
+                contenido = cifrar(convertir_llave_privada_bytes(llave_privada), llave_aes, iv)
+                salida_privada.write(contenido)
+            salida_privada.close()
+            with open(path_publica, 'wb') as salida_publica:
+                contenido = convertir_llave_publica_bytes(llave_publica)
+                salida_publica.write(contenido)
+            salida_publica.close()
+            messages.success(self.request, 'Nuevas llaves generadas')
+            return redirect('/nueva_llave')
+        else:
+            messages.error(self.request, 'Contraseña erronea')
+            return redirect('/nueva_llave')
+
+
+
 
