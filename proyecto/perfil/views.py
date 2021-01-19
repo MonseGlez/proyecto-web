@@ -20,6 +20,8 @@ from django.contrib.auth.models import User
 from django.views.generic import ListView
 from threading import Timer
 import os.path
+import os
+import posixpath
 
 class SignUpView(CreateView):
     model = Perfil
@@ -93,6 +95,7 @@ class UploadView(CreateView):
             iv = b"M\xb0%\xafd)\xe7\x11@7'\xb0\xcc\xc9\x81\xe2"
             path_privada_des ='./llaves/' + nombre + 'privada.pem'
             path_privada_cif = './llaves/' +nombre + 'privada.pem.cif'
+
             if os.path.isfile(path_privada_cif):
                 with open(path_privada_des, 'wb') as salida_des:
                     contenido = descifrar(regresar_b_arch(path_privada_cif), llave_aes, iv)
