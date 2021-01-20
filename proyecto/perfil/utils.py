@@ -114,5 +114,7 @@ def verificarfirma(public_key, signature, datos_a_firmar):
 def deadkey(usuario):
     path_privada = './llaves/' + usuario + 'privada.pem.cif'
     path_publica = './llaves/' + usuario + 'publica.pem'
-    os.remove(path_privada)
-    os.remove(path_publica)
+    if os.path.isfile(path_privada):
+        os.remove(path_privada)
+    if os.path.isfile(path_publica):
+        os.remove(path_publica)
